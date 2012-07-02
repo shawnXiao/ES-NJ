@@ -1,6 +1,7 @@
 var http = require("http");
 var url = require("url");
 var fs = require("fs");
+<<<<<<< HEAD
 var start = http.createServer(function onRequest(request, response) {
         var pathName = url.parse(request.url).pathname;
         var index = pathName.indexOf('.');
@@ -36,3 +37,16 @@ var pathInformation = function (pathName) {
 
 console.log("port 8888 is listened");
 
+=======
+
+function start(route, handle) {
+    function onRequest(request, response) {
+        var pathName = url.parse(request.url).pathname;
+        console.log("request received.");
+        route(handle, pathName, response);
+    }
+    http.createServer(onRequest).listen(8888);
+    console.log("port 8888 is listened");
+}
+exports.start = start;
+>>>>>>> 873442112f9ed2df73734c78677ad29707b86c4f
