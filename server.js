@@ -1,10 +1,11 @@
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
+var querystring = require("querystring");
 exports.start = function () {
     var pathName = "";
+    var query;
     var pathInformation = function (pathName) {
-        console.log(pathName);
         var mime = {
             ".css": "text/css",
             ".html": "text/html",
@@ -12,13 +13,13 @@ exports.start = function () {
         };
         var extention = (function () {
             var index = pathName.lastIndexOf('.');
-            return index > 0 ? '.html' : pathName.substring(index);
+            return index < 0 ? '.html' : pathName.substring(index);
         }());
 
         return {
 
             getExtention: function () {
-                return pathName;
+                return extention;
             },
             getMime: function () {
                 return mime[extention];
@@ -29,11 +30,11 @@ exports.start = function () {
 
     http.createServer(function onRequest(request, response) {
         pathName = url.parse(request.url).pathname || '/index';
+        query =  querystring.parse(url.parse(request.url).query);
         filePath = '.' + pathName;
-        console.log(filePath);
+        console.log(query);
 
         if (filePath === './favicon.ico') {
-            console.log("wahas");
             response.writeHead(404, {"Content-Type" : "text/plain"});
             response.end();
         } else {
@@ -42,7 +43,6 @@ exports.start = function () {
                 if (err) {
                     throw err;
                 }
-                console.log(pathInformation(pathName).getExtention());
                 response.writeHead(200, {
                     "Content-Type": pathInformation(pathName).getMime()
                 });
